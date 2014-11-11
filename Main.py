@@ -20,6 +20,40 @@ keyPressedA = False
 keyPressedS = False
 keyPressedD = False
 
+'''
+guards = []
+guards.append()
+
+class guard():
+	path
+	loc
+	x, y
+	def __init__(self):
+	def update(self):
+		move, do i see a body, 
+		if collision:
+	def draw(pygame.display):
+	def getRect()
+
+
+
+def update():
+	for guard in guards:
+		guard.update()
+	checkColiisons()
+	pass
+def draw():
+	for guard in guards:
+		guard.draw()
+	for wall in walls:
+		wall.draw()
+
+	dooors.draw()
+	pass
+
+'''
+
+
 #Main Game Loop
 while playing == True:
 	#get the time at start of this specific cycle of loop
@@ -87,6 +121,8 @@ while playing == True:
 	#sleep to maintain a constant framerate of 30 fps
 	if TIME_PER_FRAME - (time.time() - time_start) > 0:
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
+
+
 
 time.sleep(5)
 #Trying to see if this works with github
