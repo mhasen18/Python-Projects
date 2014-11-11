@@ -1,7 +1,7 @@
 import pygame
 import sys
 import time
-
+#This is Brandon
 size = (640, 480)
 #initialize window
 screen = pygame.display.set_mode(size)
