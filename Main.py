@@ -13,6 +13,7 @@ TIME_PER_FRAME = 1.0 / 30.0
 time_start = 0
 timeS = time.time()
 playing = True
+#bools for keys
 keyPressedW = False
 keyPressedA = False
 keyPressedS = False
@@ -25,11 +26,11 @@ while playing == True:
 	deltaX = 0
 	deltaY =0
 	#check for key and mouse events
+	#Polling input
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
 		if event.type == pygame.KEYDOWN:
-			print("BLAHHHH")
 			if event.key == pygame.K_ESCAPE:
 				playing = False
 			if event.key == pygame.K_w:
@@ -41,7 +42,6 @@ while playing == True:
 			if event.key == pygame.K_d:
 				keyPressedD = True
 		if event.type == pygame.KEYUP:
-			print("BLAHHHH")
 			if event.key == pygame.K_w:
 				keyPressedW = False
 			if event.key == pygame.K_s:
@@ -51,6 +51,7 @@ while playing == True:
 			if event.key == pygame.K_d:
 				keyPressedD = False
 
+	#check what keys are pressed
 	if keyPressedW:
 		deltaY = -5
 	if keyPressedA:
