@@ -49,7 +49,8 @@ while playing == True:
 	pygame.display.flip()
 
 	#sleep to maintain a constant framerate of 30 fps
-	time.sleep(TIME_PER_FRAME - (time.time() - time_start))
+	if TIME_PER_FRAME - (time.time() - time_start) > 0:
+		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
 
 time.sleep(5)
 #Trying to see if this works with github
