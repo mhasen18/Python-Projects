@@ -1,14 +1,19 @@
 import pygame
 import sys
 import time
-#This is Brandon
-#lets see if this works
+import urllib
+import math
+import os
+import urllib.request
+import io
+from PIL import Image
+
 size = (640, 480)
+xCenter, yCenter= size[0] / 2, size[1] / 2
+
 #initialize window
 screen = pygame.display.set_mode(size)
 
-rect = pygame.Rect(40,40,40,40)
-num = 0
 FRAMES_PER_SECOND = 30
 TIME_PER_FRAME = 1.0 / 30.0
 time_start = 0
@@ -20,12 +25,73 @@ keyPressedA = False
 keyPressedS = False
 keyPressedD = False
 
+
+
+'''
+guards = []
+guards.append()
+
+class guard():
+	path
+	loc
+	x, y
+	def __init__(self):
+	def update(self):
+		move, do i see a body, 
+		if collision:
+	def draw(pygame.display):
+	def getRect()
+
+
+
+def update():
+	for guard in guards:
+		guard.update()
+	checkColiisons()
+	pass
+def draw():
+	for guard in guards:
+		guard.draw()
+	for wall in walls:
+		wall.draw()
+
+	dooors.draw()
+	pass
+
+'''
+
+pygame.event.set_grab(True)
+pygame.mouse.set_visible(False)
+
+fileExists = os.path.isfile("player.png")
+if not fileExists:
+	URL = "http://i.imgur.com/14GOa9C.png"
+	urllib.request.urlretrieve(URL, "player.png")
+
+#load image
+playerImg = pygame.image.load("player.png")
+#move image to center of screen
+playerRect= playerImg.get_rect().move(320, 240)
+#set mouse coord right above image
+pygame.mouse.set_pos(playerRect.center[0], playerRect.center[1] - 40)
+
+#rotate image by it's center(SQURE IMAGES ONLY)
+def rot_center(image, rect, angle):
+        """rotate an image while keeping its center"""
+        rot_image = pygame.transform.rotate(image, angle)
+        rot_rect = rot_image.get_rect(center=rect.center)
+        return rot_image,rot_rect
+
+
 #Main Game Loop
 while playing == True:
+
 	#get the time at start of this specific cycle of loop
 	time_start = time.time()
-	deltaX = 0
-	deltaY =0
+
+	deltaF = 0
+	deltaS =0
+
 	#check for key and mouse events
 	#Polling input
 	for event in pygame.event.get():
@@ -51,35 +117,66 @@ while playing == True:
 				keyPressedA = False
 			if event.key == pygame.K_d:
 				keyPressedD = False
+	#get distance between mouse and center of player
+	mouseX, mouseY = pygame.mouse.get_pos()
+	mouseXO, mouseYO = pygame.mouse.get_pos()
+	mouseX, mouseY = mouseX - playerRect.center[0], mouseY - playerRect.center[1]
+	
+	#find angle at which mouse is with respect to player
+	magMovement = ((mouseX ** 2) + (mouseY ** 2)) ** (1/2)
+	if magMovement != 0:
+		dirMovement = (mouseX / magMovement, mouseY / magMovement)
+		theta = math.asin(mouseX / magMovement)
+	if mouseY > 0 and mouseX < 0:
+		theta = math.pi-theta
+	if mouseY > 0 and mouseX >= 0:
+		theta = math.pi - theta
+	theta = -theta * 180 / math.pi
+	#round to nearest degree to minimize jitterting
+	theta = round(theta)
 
 	#check what keys are pressed
 	if keyPressedW:
-		deltaY = -5
+		deltaF = 5
 	if keyPressedA:
-		deltaX = -5
+		deltaS = -5
 	if keyPressedS:
-		deltaY = 5
+		deltaF = -5
 	if keyPressedD:
-		deltaX = 5
+		deltaS = 5
 
-	num += 1
+
 
 	#make screen black(erase screen)
-	screen.fill((0,0,0))
+	screen.fill((255,255,255))
 
-	string = "The number is" + str(num) + "THE TIME IS: " + str((time.time() - timeS) * 30)
+	string = 'USE WASD TO MOVE AND MOUSE TO "STEER"'
 
 	#create a new font
 	pygame.font.init()
 	font = pygame.font.SysFont("monospace", 18)
 
 	#draw text on surface
-	rend = font.render(string, 1, (255,255,255))
+	rend = font.render(string, 1, (0,0,0))
 
-	rect = rect.move(deltaX, deltaY)
 	#daw surface on screen
 	screen.blit(rend, (0, 400))
-	pygame.draw.rect(screen, (255,255,255), rect)
+
+	#rotate the image and its positional rectangle
+	rot_image, playerRect = rot_center(playerImg, playerRect, theta)
+
+	#move rectangle bsed on key input
+	playerRect = playerRect.move(dirMovement[0] * deltaF, dirMovement[1] * deltaF)
+	playerRect = playerRect.move(-dirMovement[1] * deltaS, dirMovement[0] * deltaS)
+
+	#draw bounding box of img
+	pygame.draw.rect(screen, (0,0,0), playerRect, 1)
+
+	#draw rotated img
+	screen.blit(rot_image, playerRect)
+
+	#set mouse pos to edge of character
+	pygame.mouse.set_pos(playerRect.center[0] + round(dirMovement[0] * 40), playerRect.center[1] + round(dirMovement[1] * 40))
 
 	#update display
 	pygame.display.flip()
@@ -87,7 +184,3 @@ while playing == True:
 	#sleep to maintain a constant framerate of 30 fps
 	if TIME_PER_FRAME - (time.time() - time_start) > 0:
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
-
-time.sleep(5)
-#Trying to see if this works with github
-#seeing how to push to master
