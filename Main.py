@@ -59,6 +59,10 @@ def draw():
 	pass
 
 '''
+def draw(walls):
+	for wall in walls:
+		pygame.draw.rect(screen,(104,104,104),wall)
+
 
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
@@ -77,10 +81,10 @@ pygame.mouse.set_pos(playerRect.center[0], playerRect.center[1] - 40)
 
 #rotate image by it's center(SQURE IMAGES ONLY)
 def rot_center(image, rect, angle):
-        """rotate an image while keeping its center"""
-        rot_image = pygame.transform.rotate(image, angle)
-        rot_rect = rot_image.get_rect(center=rect.center)
-        return rot_image,rot_rect
+	"""rotate an image while keeping its center"""
+	rot_image = pygame.transform.rotate(image, angle)
+	rot_rect = rot_image.get_rect(center=rect.center)
+	return rot_image,rot_rect
 
 
 #Main Game Loop
@@ -97,6 +101,8 @@ while playing == True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			sys.exit()
+			quit
+			exit
 		if event.type == pygame.KEYDOWN:
 			if event.key == pygame.K_ESCAPE:
 				playing = False
@@ -174,6 +180,14 @@ while playing == True:
 
 	#draw rotated img
 	screen.blit(rot_image, playerRect)
+	rectForWalls = [pygame.Rect((120,180,80,100)), pygame.Rect((5,60,10,20))]
+	draw(rectForWalls)
+	
+	for rectangle in rectForWalls:
+		if rectangle.colliderect(playerRect):
+			playerRect = playerRect.move(dirMovement[0] * -deltaF, dirMovement[1] * -deltaF)
+			playerRect = playerRect.move(-dirMovement[1] * -deltaS, dirMovement[0] * -deltaS)
+			
 
 	#set mouse pos to edge of character
 	pygame.mouse.set_pos(playerRect.center[0] + round(dirMovement[0] * 40), playerRect.center[1] + round(dirMovement[1] * 40))
