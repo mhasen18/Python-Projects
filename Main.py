@@ -20,6 +20,10 @@ keyPressedA = False
 keyPressedS = False
 keyPressedD = False
 
+def draw(walls):
+        for wall in walls:
+                pygame.draw.rect(screen,(104,104,104),wall)
+
 #Main Game Loop
 while playing == True:
 	#get the time at start of this specific cycle of loop
@@ -75,11 +79,13 @@ while playing == True:
 
 	#draw text on surface
 	rend = font.render(string, 1, (255,255,255))
-
+        
 	rect = rect.move(deltaX, deltaY)
 	#daw surface on screen
 	screen.blit(rend, (0, 400))
 	pygame.draw.rect(screen, (255,255,255), rect)
+	wall_coordinates = [pygame.Rect((200,100,140,60)), pygame.Rect((12,15,89,29))]
+	draw(wall_coordinates)
 
 	#update display
 	pygame.display.flip()
