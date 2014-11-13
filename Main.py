@@ -179,12 +179,13 @@ while playing == True:
 	pygame.draw.rect(screen, (0,0,0), playerRect, 1)
 
 	#draw rotated img
+	collisionRect = pygame.Rect(playerRect.center[0] - 32, playerRect.center[1] - 32, 64, 64)
 	screen.blit(rot_image, playerRect)
 	rectForWalls = [pygame.Rect((120,180,80,100)), pygame.Rect((5,60,10,20))]
 	draw(rectForWalls)
 	
 	for rectangle in rectForWalls:
-		if rectangle.colliderect(playerRect):
+		if rectangle.colliderect(collisionRect):
 			playerRect = playerRect.move(dirMovement[0] * -deltaF, dirMovement[1] * -deltaF)
 			playerRect = playerRect.move(-dirMovement[1] * -deltaS, dirMovement[0] * -deltaS)
 			
