@@ -41,19 +41,6 @@ def draw(walls):
 	for wall in walls:
 		pygame.draw.rect(screen,(104,104,104),wall)
 
-def rotPoint(point, axis, ang):
-	""" Orbit. calcs the new loc for a point that rotates a given num of degrees around an axis point,
-	+clockwise, -anticlockwise -> tuple x,y
-	"""
-	x, y = point[0] - axis[0], point[1] - axis[1]
-	radius = math.sqrt(x*x + y*y) # get the distance between points
-
-	RAng = math.radians(ang)
-	h = axis[0] + ( radius * math.sin(RAng) )
-	v = axis[1] + ( radius * math.cos(RAng) )
-
-	return h, v
-
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
 
