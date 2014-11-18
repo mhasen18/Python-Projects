@@ -22,9 +22,9 @@ import sys
 ## - Resolution independence for screen shouldn't be hard, I give an example below
 
 pygame.init()
-size = (1080, 768)
+size = (640,480)
 pygame.display.set_caption("Body Game")
-screen = pygame.display.set_mode((1080, 768))
+screen = pygame.display.set_mode((640,480))
 bgImg = pygame.image.load("res/menu-bg.jpg")
 
 ## EXAMPLE
@@ -99,8 +99,8 @@ while playing:
             screen.blit(instructionsIcon, (260,200))
             instructionsTxt = font.render("Instructions", 1, (255,0,0))
             screen.blit(instructionsTxt, (263, 275))
-            onMouseClick("res/instructions_box.jpg")
             pygame.mouse.set_cursor(*pygame.cursors.diamond)
+            onMouseClick("res/instructions_box.jpg")
             break
 
         if icon.collidepoint(pygame.mouse.get_pos()) and i == 2:
@@ -108,8 +108,8 @@ while playing:
             screen.blit(creditsIcon,(360,200))
             creditsTxt = font.render("Credits", 1, (255,0,0))
             screen.blit(creditsTxt, (377, 275))
-            onMouseClick("res/credits_box.jpg")
             pygame.mouse.set_cursor(*pygame.cursors.diamond)
+            onMouseClick("res/credits_box.jpg")
             break
 
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
