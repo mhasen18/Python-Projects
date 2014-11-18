@@ -266,7 +266,9 @@ while playing == True:
 	#draw rotated img
 	collisionRect = pygame.Rect(playerRect.center[0] - 32, playerRect.center[1] - 32, 64, 64)
 	screen.blit(rot_image, playerRect)
-	rectForWalls = [pygame.Rect((120,180,80,100)), pygame.Rect((5,60,10,20))]
+	#rectForWalls = [pygame.Rect((120,180,80,100)), pygame.Rect((5,60,10,20))]
+	rectForWalls = [pygame.Rect((0,350,375,25)), pygame.Rect((350,0,25,225)),
+                        pygame.Rect((525,0,25,450)), pygame.Rect((700,425,324,25))]
 	draw(rectForWalls)
 	
 	for ele in guards:
