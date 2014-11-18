@@ -6,6 +6,7 @@ import math
 import os
 import urllib.request
 import io
+import astar
 from PIL import Image
 
 '''
@@ -17,6 +18,25 @@ So you guys go ahead and play around with stuff and text/email
 me if you have any ideas/problems/concerns or just need some debugging.
 Sky's the limit
 		- JOHN
+'''
+
+'''
+PROBLEMS:
+-- Flashlight flickering ! FIXED !
+-- 
+'''
+
+'''
+TODO:
+-- Walls
+-- Guard vision collision detection
+-- Player collision and response
+-- Path finding implementation
+-- Graphics
+-- Level reader
+-- Guard killing
+-- Guard vision response(bodies)
+-- etc
 '''
 size = (1024, 768)
 xCenter, yCenter= size[0] / 2, size[1] / 2
@@ -76,13 +96,14 @@ class Guard:
 	def __init__(self, imageFile, pos_, path_):
 		#initialize vars
 		self.path = path_
+		self.speed = 4
 		self.pos = [0,0]
 		self.pos[0], self.pos[1] = pos_[0], pos_[1]
 		self.img = pygame.image.load(imageFile)
 		self.flash = pygame.image.load("flashlight.png")
 		self.guardRect = self.img.get_rect()
-		self.guardRect.x = self.pos[0]
-		self.guardRect.y = self.pos[1]
+		self.guardRect.center = self.pos
+		self.startPoint = self.guardRect.center[0], self.guardRect.center[1]
 		#double size of flashlight image
 		self.flash = pygame.transform.scale2x(self.flash)
 
@@ -91,11 +112,10 @@ class Guard:
 		rot_img, self.guardRect = rot_center(self.img, self.guardRect, self.theta)
 
 		#move pos based on speed
-		self.pos[0], self.pos[1] = self.pos[0] - (self.magMove[0] * 5), self.pos[1] - (self.magMove[1] * 5)
+		self.pos[0], self.pos[1] = self.pos[0] - (self.magMove[0] * self.speed), self.pos[1] - (self.magMove[1] * self.speed)
 
-		#move the guard based on position(I dont know why I am using the flashlight rect but it works for some reason)
-		self.guardRect.center = self.pos[0] + self.guardRect.width / 2 + ((self.flash.get_width() - self.guardRect.width) / 2) , self.pos[1] + self.guardRect.height / 2 + ((self.flash.get_height() - self.guardRect.height) / 2)
-		
+		#move the guard based on position
+		self.guardRect.center = self.pos[0], self.pos[1]
 
 		#draw guard on screen
 		screen.blit(rot_img, self.guardRect)
@@ -118,8 +138,8 @@ class Guard:
 		thet = 0
 
 		#get direction of movement based on path
-		dirMove = (self.guardRect.center[0] - self.path[0][0], self.guardRect.center[1] - self.path[0][1])
-
+		dirMove = (self.startPoint[0] - self.path[0][0], self.startPoint[1] - self.path[0][1])
+		
 		#get unit vector for movement
 		mag = ((dirMove[0] ** 2) + (dirMove[1] ** 2)) ** (1/2)
 
@@ -127,18 +147,18 @@ class Guard:
 		if mag != 0: 
 			self.magMove[0], self.magMove[1] = dirMove[0] / mag, dirMove[1] / mag
 			thet = math.asin(dirMove[0]/ mag)
-
 		#adjust angle based of the direction of movement
 		if dirMove[1] > 0 and dirMove[0] < 0:
 			thet = math.pi - thet
 		if dirMove[1] > 0 and dirMove[0] >= 0:
 			thet = math.pi - thet
-
+		print(self.magMove)
 		#convert to degrees and assign to class var
-		self.theta = -thet * 180 / math.pi + 180
+		self.theta = (-thet * 180 / math.pi) + 180
 
-		#if the guard is at the current position: take the next path location and put the current at the end of stack
 		if math.fabs(self.path[0][0] - self.guardRect.center[0]) <= 5 and math.fabs(self.path[0][1] - self.guardRect.center[1]) <= 5:
+			self.startPoint = self.path[0]
+			self.guardRect.center = (self.path[0][0], self.path[0][1])
 			tmp = self.path.pop(0)
 			self.path.append(tmp)
 		
