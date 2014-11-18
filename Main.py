@@ -6,6 +6,10 @@ import math
 import os
 import urllib.request
 import io
+import astar
+from guard import Guard
+from level_builder import LevelBuilder
+
 from PIL import Image
 
 '''
@@ -17,6 +21,25 @@ So you guys go ahead and play around with stuff and text/email
 me if you have any ideas/problems/concerns or just need some debugging.
 Sky's the limit
 		- JOHN
+'''
+
+'''
+PROBLEMS:
+-- Flashlight flickering ! FIXED !
+-- 
+'''
+
+'''
+TODO:
+-- Walls
+-- Guard vision collision detection
+-- Player collision and response
+-- Path finding implementation
+-- Graphics
+-- Level reader
+-- Guard killing
+-- Guard vision response(bodies)
+-- etc
 '''
 size = (1024, 768)
 xCenter, yCenter= size[0] / 2, size[1] / 2
@@ -36,10 +59,6 @@ keyPressedS = False
 keyPressedD = False
 
 guards = []
-
-def draw(walls):
-	for wall in walls:
-		pygame.draw.rect(screen,(104,104,104),wall)
 
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
@@ -72,77 +91,7 @@ def rot_center(image, rect, angle):
 	return rot_image,rot_rect
 
 
-class Guard:
-	def __init__(self, imageFile, pos_, path_):
-		#initialize vars
-		self.path = path_
-		self.pos = [0,0]
-		self.pos[0], self.pos[1] = pos_[0], pos_[1]
-		self.img = pygame.image.load(imageFile)
-		self.flash = pygame.image.load("flashlight.png")
-		self.guardRect = self.img.get_rect()
-		self.guardRect.x = self.pos[0]
-		self.guardRect.y = self.pos[1]
-		#double size of flashlight image
-		self.flash = pygame.transform.scale2x(self.flash)
-
-	def draw(self, screen):
-		#rotate the image of the guard
-		rot_img, self.guardRect = rot_center(self.img, self.guardRect, self.theta)
-
-		#move pos based on speed
-		self.pos[0], self.pos[1] = self.pos[0] - (self.magMove[0] * 5), self.pos[1] - (self.magMove[1] * 5)
-
-		#move the guard based on position(I dont know why I am using the flashlight rect but it works for some reason)
-		self.guardRect.center = self.pos[0] + self.guardRect.width / 2 + ((self.flash.get_width() - self.guardRect.width) / 2) , self.pos[1] + self.guardRect.height / 2 + ((self.flash.get_height() - self.guardRect.height) / 2)
 		
-
-		#draw guard on screen
-		screen.blit(rot_img, self.guardRect)
-
-		#rotate flashlight
-		rot_img, newRect = rot_center(self.flash, self.flash.get_rect(), self.theta)
-
-		#position flashlight at center of guard
-		newRect.center = self.guardRect.center
-
-		#move the flashlight to tip of guard based on direction(this was hard)
-		newRect.center = (newRect.center[0] + 1 - (math.sin(math.radians(self.theta)) * ( 44 + self.flash.get_height() / 2)), newRect.center[1] + 1 - (math.cos(math.radians(self.theta)) * (44 + self.flash.get_height() / 2)))
-
-		#draw flashlight
-		screen.blit(rot_img, newRect)
-
-
-	def update(self):
-		self.magMove = [0, 0]
-		thet = 0
-
-		#get direction of movement based on path
-		dirMove = (self.guardRect.center[0] - self.path[0][0], self.guardRect.center[1] - self.path[0][1])
-
-		#get unit vector for movement
-		mag = ((dirMove[0] ** 2) + (dirMove[1] ** 2)) ** (1/2)
-
-		#set the class var to the movement determine angle
-		if mag != 0: 
-			self.magMove[0], self.magMove[1] = dirMove[0] / mag, dirMove[1] / mag
-			thet = math.asin(dirMove[0]/ mag)
-
-		#adjust angle based of the direction of movement
-		if dirMove[1] > 0 and dirMove[0] < 0:
-			thet = math.pi - thet
-		if dirMove[1] > 0 and dirMove[0] >= 0:
-			thet = math.pi - thet
-
-		#convert to degrees and assign to class var
-		self.theta = -thet * 180 / math.pi + 180
-
-		#if the guard is at the current position: take the next path location and put the current at the end of stack
-		if math.fabs(self.path[0][0] - self.guardRect.center[0]) <= 5 and math.fabs(self.path[0][1] - self.guardRect.center[1]) <= 5:
-			tmp = self.path.pop(0)
-			self.path.append(tmp)
-		
-
 #initialize guard
 path1 =  [(80,60),(460, 60), (460,160),(80, 160)]
 path2 = [(200, 600), [800, 600]]
@@ -154,6 +103,13 @@ guards.append(Guard("player.png", [100,200], path2))
 guards.append(Guard("player.png", [300,200], path3))
 guards.append(Guard("player.png", [300,200], path4))
 
+rectForWalls = [pygame.Rect((0,350,375,25)), pygame.Rect((350,0,25,225)),
+                        pygame.Rect((525,0,25,450)), pygame.Rect((700,425,324,25))]
+
+level_one = LevelBuilder(rectForWalls, guards)
+for elem in level_one.getRectGrid():
+        print(elem)
+        
 #Main Game Loop
 while playing == True:
 	#get the time at start of this specific cycle of loop
@@ -161,8 +117,7 @@ while playing == True:
 
 	deltaF = 0
 	deltaS =0
-	for ele in guards:
-		ele.update()
+
 
 	#check for key and mouse events
 	#Polling input
@@ -246,12 +201,9 @@ while playing == True:
 	#draw rotated img
 	collisionRect = pygame.Rect(playerRect.center[0] - 32, playerRect.center[1] - 32, 64, 64)
 	screen.blit(rot_image, playerRect)
-	rectForWalls = [pygame.Rect((120,180,80,100)), pygame.Rect((5,60,10,20))]
-	draw(rectForWalls)
 	
-	for ele in guards:
-		ele.draw(screen)
-
+	level_one.draw(screen)
+	
 	for rectangle in rectForWalls:
 		if rectangle.colliderect(collisionRect):
 			playerRect = playerRect.move(dirMovement[0] * -deltaF, dirMovement[1] * -deltaF)
