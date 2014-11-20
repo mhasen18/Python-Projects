@@ -45,7 +45,7 @@ size = (1024, 768)
 xCenter, yCenter= size[0] / 2, size[1] / 2
 
 #initialize window
-screen = pygame.display.set_mode(size)
+screen = pygame.display.set_mode(size, pygame.HWSURFACE)
 
 FRAMES_PER_SECOND = 30
 TIME_PER_FRAME = 1.0 / 30.0
@@ -90,26 +90,26 @@ def rot_center(image, rect, angle):
 	rot_rect = rot_image.get_rect(center=rect.center)
 	return rot_image,rot_rect
 
+rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
+                        pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
 
-		
+level_one = LevelBuilder(rectForWalls, guards)
+for elem in level_one.getRectGrid():
+        print(elem)
+        pass
+        
 #initialize guard
 path1 =  [(80,60),(460, 60), (460,160),(80, 160)]
 path2 = [(200, 600), [800, 600]]
 path3 = [(60, 700), (980, 700), (980, 60), (60,60)]
 path4 = [(700, 300), (900, 300), (800, 500)]
 
-guards.append(Guard("player.png", [300,200], path1))
-guards.append(Guard("player.png", [100,200], path2))
-guards.append(Guard("player.png", [300,200], path3))
-guards.append(Guard("player.png", [300,200], path4))
+guards.append(Guard("player.png", [300,200], path1, level_one))
+guards.append(Guard("player.png", [100,200], path2, level_one))
+guards.append(Guard("player.png", [300,200], path3, level_one))
+guards.append(Guard("player.png", [300,200], path4, level_one))
 
-rectForWalls = [pygame.Rect((0,350,375,25)), pygame.Rect((350,0,25,225)),
-                        pygame.Rect((525,0,25,450)), pygame.Rect((700,425,324,25))]
 
-level_one = LevelBuilder(rectForWalls, guards)
-for elem in level_one.getRectGrid():
-        print(elem)
-        
 #Main Game Loop
 while playing == True:
 	#get the time at start of this specific cycle of loop
@@ -179,18 +179,6 @@ while playing == True:
 	#make screen black(erase screen)
 	screen.fill((0,0,255))
 
-	string = 'USE WASD TO MOVE AND MOUSE TO "STEER"'
-
-	#create a new font
-	pygame.font.init()
-	font = pygame.font.SysFont("monospace", 18)
-
-	#draw text on surface
-	rend = font.render(string, 1, (0,0,0))
-
-	#daw surface on screen
-	screen.blit(rend, (0, 400))
-
 	#rotate the image and its positional rectangle
 	rot_image, playerRect = rot_center(playerImg, playerRect, theta)
 
@@ -204,7 +192,7 @@ while playing == True:
 	
 	level_one.draw(screen)
 	
-	for rectangle in rectForWalls:
+	for rectangle in level_one.walls:
 		if rectangle.colliderect(collisionRect):
 			playerRect = playerRect.move(dirMovement[0] * -deltaF, dirMovement[1] * -deltaF)
 			playerRect = playerRect.move(-dirMovement[1] * -deltaS, dirMovement[0] * -deltaS)
@@ -215,7 +203,6 @@ while playing == True:
 
 	#update display
 	pygame.display.flip()
-
 	#sleep to maintain a constant framerate of 30 fps
 	if TIME_PER_FRAME - (time.time() - time_start) > 0:
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
