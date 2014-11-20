@@ -1,4 +1,6 @@
 import pygame
+import time
+import astar
 
 class LevelBuilder():
         
@@ -6,13 +8,17 @@ class LevelBuilder():
 		self.walls = walls
 		self.guards = guards
 
-	def draw(self, screen):
-		gray = (104,104,104)
-		for wall in self.walls:
-			pygame.draw.rect(screen, gray, wall)
+	def update(self):
 		for guard in self.guards:
 			guard.update()
+
+	def draw(self, screen):
+		gray = (104,104,104)
+
+		for guard in self.guards:
 			guard.draw(screen)
+		for wall in self.walls:
+			pygame.draw.rect(screen, gray, wall)
 			
 	def getRectGrid(self):
 		"""Returns a 64x48 matrix of 0s and 1s, where 1s denote the presence of a wall"""
@@ -62,4 +68,3 @@ class LevelBuilder():
 				GridList[i][left_coordinate+1] = 1
 				
 		return GridList
-

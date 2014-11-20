@@ -45,10 +45,10 @@ size = (1024, 768)
 xCenter, yCenter= size[0] / 2, size[1] / 2
 
 #initialize window
-screen = pygame.display.set_mode(size, pygame.HWSURFACE)
+screen = pygame.display.set_mode(size)
 
 FRAMES_PER_SECOND = 30
-TIME_PER_FRAME = 1.0 / 30.0
+TIME_PER_FRAME = 1.0 / 30
 time_start = 0
 timeS = time.time()
 playing = True
@@ -57,6 +57,7 @@ keyPressedW = False
 keyPressedA = False
 keyPressedS = False
 keyPressedD = False
+keyPressedSpace = False
 
 guards = []
 
@@ -74,7 +75,7 @@ if not fileExists:
 	urllib.request.urlretrieve(URL, "flashlight.png")
 
 #load image
-playerImg = pygame.image.load("player.png")
+playerImg = pygame.image.load("player.png").convert_alpha()
 flashlight = pygame.image.load("flashlight.png")
 
 #move image to center of screen
@@ -89,26 +90,32 @@ def rot_center(image, rect, angle):
 	rot_image = pygame.transform.rotate(image, angle)
 	rot_rect = rot_image.get_rect(center=rect.center)
 	return rot_image,rot_rect
-
+rectForWalls = []
 rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
                         pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
 
+rectForWalls.append(pygame.Rect(0,0,size[0], 32))
+rectForWalls.append(pygame.Rect(0,size[1] - 32,size[0], 32))
+rectForWalls.append(pygame.Rect(0, 32, 32, size[1] - 32))
+rectForWalls.append(pygame.Rect(size[0] - 32, 32, 32, size[1] - 32))
+
 level_one = LevelBuilder(rectForWalls, guards)
 for elem in level_one.getRectGrid():
-        print(elem)
+        #print(elem)
         pass
         
 #initialize guard
-path1 =  [(80,60),(460, 60), (460,160),(80, 160)]
+path1 =  [(300,160),(80, 160)]
 path2 = [(200, 600), [800, 600]]
-path3 = [(60, 700), (980, 700), (980, 60), (60,60)]
-path4 = [(700, 300), (900, 300), (800, 500)]
+path3 = [(450, 100), (450, 400)]
+path4 = [(700, 100), (900, 100), (900, 300), (700, 300)]
 
 guards.append(Guard("player.png", [300,200], path1, level_one))
 guards.append(Guard("player.png", [100,200], path2, level_one))
-guards.append(Guard("player.png", [300,200], path3, level_one))
+guards.append(Guard("player.png", [32,200], path3, level_one))
 guards.append(Guard("player.png", [300,200], path4, level_one))
 
+first = True
 
 #Main Game Loop
 while playing == True:
@@ -137,6 +144,8 @@ while playing == True:
 				keyPressedA = True
 			if event.key == pygame.K_d:
 				keyPressedD = True
+			if event.key == pygame.K_SPACE:
+				keyPressedSpace = True
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_w:
 				keyPressedW = False
@@ -146,6 +155,8 @@ while playing == True:
 				keyPressedA = False
 			if event.key == pygame.K_d:
 				keyPressedD = False
+			if event.key == pygame.K_SPACE:
+				keyPressedSpace = False
 	#get distance between mouse and center of player
 	mouseX, mouseY = pygame.mouse.get_pos()
 	mouseXO, mouseYO = pygame.mouse.get_pos()
@@ -174,10 +185,11 @@ while playing == True:
 	if keyPressedD:
 		deltaS = 5
 
-
+	if not keyPressedSpace:
+		level_one.update()
 
 	#make screen black(erase screen)
-	screen.fill((0,0,255))
+	screen.fill((255,255,255))
 
 	#rotate the image and its positional rectangle
 	rot_image, playerRect = rot_center(playerImg, playerRect, theta)
@@ -202,7 +214,13 @@ while playing == True:
 	pygame.mouse.set_pos(playerRect.center[0] + round(dirMovement[0] * 40), playerRect.center[1] + round(dirMovement[1] * 40))
 
 	#update display
-	pygame.display.flip()
+
+	if first:
+		pygame.display.flip()
+	else:
+		pygame.display.update(playerRect)
+
+	#print(TIME_PER_FRAME - (time.time() - time_start))
 	#sleep to maintain a constant framerate of 30 fps
 	if TIME_PER_FRAME - (time.time() - time_start) > 0:
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))

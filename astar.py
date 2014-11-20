@@ -18,7 +18,7 @@ class Node:
 		self.distance = distance
 		self.priority = priority
 	def updatePriority(self, dest):
-		self.priority = round(self.distance + self.estimate(dest) * 5)
+		self.priority = round(self.distance + self.estimate(dest) * 10)
 	def __lt__(self, other):
 		return self.priority < other.priority
 	def estimate(self, dest):
@@ -79,4 +79,4 @@ class AStar:
 								break
 						heapq.heapify(queue)
 
-		return None
+		return ("NOT FOUND")
