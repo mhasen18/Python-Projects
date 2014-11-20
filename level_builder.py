@@ -1,7 +1,7 @@
 import pygame
 
 class LevelBuilder():
-        
+	
 	def __init__(self, walls, guards):
 		self.walls = walls
 		self.guards = guards
@@ -47,6 +47,8 @@ class LevelBuilder():
 		##0 0 0 0 0 0 0 0 0 0 0 0 0
 		##0 0 0 0 0 0 0 0 0 0 0 0 0
 
+		##Should be taken care of.
+
 		
 		GridList = [[0 for x in range(64)] for y in range(48)]
 		for wall in self.walls:
@@ -54,12 +56,14 @@ class LevelBuilder():
 			top_coordinate, bottom_coordinate = int(wall.top/16), int(wall.bottom/16)
 			
 			for i in range(left_coordinate, right_coordinate):
-				GridList[top_coordinate][i] = 1
-				GridList[top_coordinate+1][i] = 1
+				for j in range(-2, (bottom_coordinate-top_coordinate)+2):
+					if top_coordinate + j>= 0 and top_coordinate+j<=47:
+						GridList[top_coordinate + j][i] = 1
 				
 			for i in range(top_coordinate, bottom_coordinate):
-				GridList[i][left_coordinate] = 1
-				GridList[i][left_coordinate+1] = 1
+				for j in range(-2, (right_coordinate-left_coordinate)+2):
+					if left_coordinate+j >= 0 and left_coordinate+j<=63:
+						GridList[i][left_coordinate+j] = 1
 				
 		return GridList
 
