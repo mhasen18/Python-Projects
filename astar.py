@@ -1,4 +1,5 @@
 import heapq
+import math
 
 #path finding algorithm
 
@@ -18,11 +19,14 @@ class Node:
 		self.distance = distance
 		self.priority = priority
 	def updatePriority(self, dest):
-		self.priority = round(self.distance + self.estimate(dest) * 5)
+		self.priority = round(self.distance + self.estimate(dest) * 10)
 	def __lt__(self, other):
 		return self.priority < other.priority
 	def estimate(self, dest):
-		return (((dest[0] - self.x) ** 2) + ((dest[1] - self. y) ** 2)) ** (1 / 2)
+		#Euclidian
+		#return (((dest[0] - self.x) ** 2) + ((dest[1] - self. y) ** 2)) ** (1 / 2)
+		#Manhattan
+		return (math.fabs(dest[0] - self.x) + math.fabs(dest[1] - self.y))
 	def __repr__(self):
 		return("Node" + str(self.x) + str(self.y) + " P" + str(self.priority))
 
@@ -30,8 +34,8 @@ class AStar:
 	def __init__(self, grid_):
 		self.grid = grid_
 	def pathFind(self, start, goal):
-		open_nodes = []
-		closed_nodes = []
+		open_nodes = set()
+		closed_nodes = set()
 		dx = [1, -1, 0, 0, 1, 1, -1, -1]
 		dy = [0, 0, 1, -1, 1, -1, 1, -1]
 		queue = []
@@ -79,4 +83,4 @@ class AStar:
 								break
 						heapq.heapify(queue)
 
-		return None
+		return ("NOT FOUND")
