@@ -43,3 +43,28 @@ class LevelBuilder():
 						GridList[i][left_coordinate+j] = 1
 				
 		return GridList
+'''
+#path finding test(IGNORE)
+size = (1024, 768)
+rectForWalls = []
+guards = []
+rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
+                        pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
+
+rectForWalls.append(pygame.Rect(0,0,size[0], 32))
+rectForWalls.append(pygame.Rect(0,size[1] - 32,size[0], 32))
+rectForWalls.append(pygame.Rect(0, 32, 32, size[1] - 32))
+rectForWalls.append(pygame.Rect(size[0] - 32, 32, 32, size[1] - 32))
+
+level_one = LevelBuilder(rectForWalls, guards)
+grd = level_one.getRectGrid()
+star = astar.AStar(grd.copy(), (4,4), (40,4))
+start = (4,4)
+
+timeStart = time.time()
+for i in range(25):
+	if not star.notFound:
+		break
+	path = star.pathFind(.01)
+print(time.time() - timeStart)
+'''

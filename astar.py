@@ -1,5 +1,6 @@
 import heapq
 import math
+import time
 
 #path finding algorithm
 
@@ -19,6 +20,7 @@ class Node:
 		self.distance = distance
 		self.priority = priority
 	def updatePriority(self, dest):
+		#update priority of node based on heuristic
 		self.priority = round(self.distance + self.estimate(dest) * 10)
 	def __lt__(self, other):
 		return self.priority < other.priority
@@ -31,32 +33,46 @@ class Node:
 		return("Node" + str(self.x) + str(self.y) + " P" + str(self.priority))
 
 class AStar:
-	def __init__(self, grid_):
+	def __init__(self, grid_, start, goal):
 		self.grid = grid_
-	def pathFind(self, start, goal):
-		open_nodes = set()
-		closed_nodes = set()
-		dx = [1, -1, 0, 0, 1, 1, -1, -1]
-		dy = [0, 0, 1, -1, 1, -1, 1, -1]
-		queue = []
-		openNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
-		closedNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
-
+		self.goal = goal
+		self.open_nodes = set()
+		self.closed_nodes = set()
+		self.queue = []
+		self.openNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
+		self.closedNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
 		startNode = Node(start[0], start[1], None, 0, 0)
 		startNode.updatePriority(goal)
-		heapq.heappush(queue, startNode)
-		openNodes[startNode.x][startNode.y] = 0
-		closedNodes[startNode.x][startNode.y] = 1
+		heapq.heappush(self.queue, startNode)
+		self.openNodes[startNode.x][startNode.y] = 0
+		self.closedNodes[startNode.x][startNode.y] = 1
+		self.notFound = True
 
-		while len(queue) > 0:
-			curNode = heapq.heappop(queue)
+	def pathFind(TIME_PERMITTED):
+		#send in the time we are allowing to compute this part 
+		#of the path
+		#(path not found at once, partitions path finding)
+		dx = [1, -1, 0, 0, 1, 1, -1, -1]
+		dy = [0, 0, 1, -1, 1, -1, 1, -1]
+		timeStart = time.time()
+		while len(self.queue) > 0 and self.notFound:
+
+			if time.time() - timeStart > TIME_PERMITTED:
+				pathList = []
+				while curNode.parent:
+					pathList.append((curNode.x, curNode.y))
+					curNode = curNode.parent
+				return pathList[::-1]
+
+			curNode = heapq.heappop(self.queue)
 			x = curNode.x
 			y = curNode.y
-			openNodes[x][y] = 0
-			closedNodes[x][y] = 1
+			self.openNodes[x][y] = 0
+			self.closedNodes[x][y] = 1
 
-			if x == goal[0] and y == goal[1]:
+			if x == self.goal[0] and y == self.goal[1]:
 				pathList = []
+				self.notFound = False
 				while curNode.parent:
 					pathList.append((curNode.x, curNode.y))
 					curNode = curNode.parent
@@ -66,21 +82,21 @@ class AStar:
 				childX = x + dx[i]
 				childY = y + dy[i]
 
-				if not childX < 0 and not childX > len(self.grid) - 1 and not childY < 0 and not childY > len(self.grid[0]) - 1 and self.grid[childX][childY] != 1 and closedNodes[childX][childY] != 1:
+				if not childX < 0 and not childX > len(self.grid) - 1 and not childY < 0 and not childY > len(self.grid[0]) - 1 and self.grid[childX][childY] != 1 and self.closedNodes[childX][childY] != 1:
 					if i < 4:
 						childNode = Node(childX, childY, curNode, curNode.distance + 10, curNode.priority)
 					else:
 						childNode = Node(childX, childY, curNode, curNode.distance + 12, curNode.priority)
-					childNode.updatePriority(goal)
-					if openNodes[childX][childY] == 0:
-						openNodes[childX][childY] = childNode.priority
-						heapq.heappush(queue, childNode)
-					elif openNodes[childX][childY] < childNode.priority:
-						openNodes[childX][childY] = childNode.priority
-						for i2 in range(len(queue)):
-							if queue[i2].x == childX and queue[i2].y == childY:
-								queue[i2] = childNode
+					childNode.updatePriority(self.goal)
+					if self.openNodes[childX][childY] == 0:
+						self.openNodes[childX][childY] = childNode.priority
+						heapq.heappush(self.queue, childNode)
+					elif self.openNodes[childX][childY] < childNode.priority:
+						self.openNodes[childX][childY] = childNode.priority
+						for i2 in range(len(self.queue)):
+							if self.queue[i2].x == childX and self.queue[i2].y == childY:
+								self.queue[i2] = childNode
 								break
-						heapq.heapify(queue)
+						heapq.heapify(self.queue)
 
 		return ("NOT FOUND")

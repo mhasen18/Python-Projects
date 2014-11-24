@@ -145,8 +145,8 @@ class Guard:
 		self.path = path_
 		self.level = map_
 		self.speed = 4
-		self.range = 300
-		self.fov = 60
+		self.range = 200
+		self.fov = 40
 		self.triangles = []
 		self.pos = [0,0]
 		self.pos[0], self.pos[1] = pos_[0], pos_[1]
