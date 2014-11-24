@@ -8,6 +8,7 @@ import urllib.request
 import io
 import astar
 import player
+import body
 from guard import Guard
 from level_builder import LevelBuilder
 
@@ -27,6 +28,7 @@ playing = True
 keys = {"W": False, "S" : False, "D" : False, "A" : False, "SPACE" : False}
 
 guards = []
+bodies = []
 
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
@@ -69,8 +71,8 @@ guards.append(Guard("player.png", [100,200], path2, level_one))
 guards.append(Guard("player.png", [32,200], path3, level_one))
 guards.append(Guard("player.png", [300,200], path4, level_one))
 c = 50
-
-star = astar.AStar(level_one.getRectGrid())
+timeSlept = 0
+timePStart = time.time()
 #Main Game Loop
 while playing == True:
 	#get the time at start of this specific cycle of loop
@@ -107,20 +109,51 @@ while playing == True:
 				keys['D'] = False
 			if event.key == pygame.K_SPACE:
 				keys['SPACE'] = False
+	
+	#check for if the player kills a guard
+	for i in range(len(guards)):
+		#if rects collide(will change when we have attack animation)
+		if player.playerRect.colliderect(guards[i].guardRect) and player.attacking:
+			#get the guard/remove it
+			tmp = guards.pop(i)
+			#add body in guards position
+			bodies.append(body.Body(tmp.pos, tmp.theta))
+			#(can only kill one guard at time[logic] so stop checking
+			break
 
+	#update everything if not paused
 	if not keys['SPACE']:
 		level_one.update()
-	player.update(keys)
+		player.update(keys)
+		for bodi in bodies:
+			bodi.update((0, 0))
 
 	#make screen black(erase screen)
 	screen.fill((255,255,255))
 	
+	#draw everything
 	level_one.draw(screen)
 	player.draw(screen)
+	for bodi in bodies:
+		bodi.draw(screen)
 
 	#update display
 	pygame.display.flip()
 
+
+	'''
+	#print out time remaning/sec
+	if time.time() - timePStart > 1:
+		timePStart = time.time()
+		print(timeSlept)
+		timeSlept = 0
+	'''
+	
 	#sleep to maintain a constant framerate of 30 fps
-	if TIME_PER_FRAME - (time.time() - time_start) > .0005:
+	if TIME_PER_FRAME - (time.time() - time_start) > .0002:
+		timeSlept += TIME_PER_FRAME - (time.time() - time_start)
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
+		
+
+
+
