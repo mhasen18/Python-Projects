@@ -42,7 +42,7 @@ if not fileExists:
 
 rectForWalls = []
 rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
-                        pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
+			pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
 
 rectForWalls.append(pygame.Rect(0,0,size[0], 32))
 rectForWalls.append(pygame.Rect(0,size[1] - 32,size[0], 32))
@@ -59,7 +59,7 @@ player = player.Player(PLAYER_IMG, (612, 348), 5, level_one)
 
 #set mouse coord right above image
 pygame.mouse.set_pos(player.playerRect.center[0], player.playerRect.center[1] - 40)
-        
+	
 #initialize guard
 path1 =  [(300,160),(80, 160)]
 path2 = [(200, 600), [800, 600]]
@@ -97,7 +97,7 @@ while playing == True:
 			if event.key == pygame.K_d:
 				keys['D'] = True
 			if event.key == pygame.K_SPACE:
-				keys['SPACE'] = True
+				keys['SPACE'] = not keys['SPACE']
 		if event.type == pygame.KEYUP:
 			if event.key == pygame.K_w:
 				keys['W'] = False
@@ -107,8 +107,6 @@ while playing == True:
 				keys['A'] = False
 			if event.key == pygame.K_d:
 				keys['D'] = False
-			if event.key == pygame.K_SPACE:
-				keys['SPACE'] = False
 	
 	#check for if the player kills a guard
 	for i in range(len(guards)):
@@ -127,6 +125,7 @@ while playing == True:
 		player.update(keys)
 		for bodi in bodies:
 			bodi.update((0, 0))
+			
 
 	#make screen black(erase screen)
 	screen.fill((255,255,255))
@@ -136,6 +135,12 @@ while playing == True:
 	player.draw(screen)
 	for bodi in bodies:
 		bodi.draw(screen)
+
+	if keys['SPACE']:
+		pygame.font.init()
+		font = pygame.font.SysFont('timesnewroman', 100)
+		playGameTxt = font.render("PAUSED", 1, (0,0,0))
+		screen.blit(playGameTxt, (320,300))
 
 	#update display
 	pygame.display.flip()
