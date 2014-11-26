@@ -140,7 +140,11 @@ class Line:
 
 
 class Guard:
-	def __init__(self, imageFile, pos_, path_, map_):
+	def __init__(self, pos_, path_, map_):
+		#same thing as player; these two are used to make it look like they're walking
+		self.rightForward = False
+		self.x=0
+
 		#initialize vars
 		self.path = path_
 		self.level = map_
@@ -150,7 +154,7 @@ class Guard:
 		self.triangles = []
 		self.pos = [0,0]
 		self.pos[0], self.pos[1] = pos_[0], pos_[1]
-		self.img = pygame.image.load(imageFile).convert_alpha()
+		self.img = pygame.image.load("res/guard-left.png").convert_alpha()
 		self.guardRect = self.img.get_rect()
 		self.guardRect.center = self.pos
 		self.startPoint = self.guardRect.center[0], self.guardRect.center[1]
@@ -272,6 +276,14 @@ class Guard:
 
 		#move pos based on speed
 		self.pos[0], self.pos[1] = self.pos[0] - (self.magMove[0] * self.speed), self.pos[1] - (self.magMove[1] * self.speed)
+		if self.rightForward:
+			self.img = pygame.image.load("res/guard-right.png").convert_alpha()
+		else:
+			self.img = pygame.image.load("res/guard-left.png").convert_alpha()
+		self.x+=1
+		if self.x == 10:
+			self.rightForward = not self.rightForward
+			self.x = 0
 
 		#start ray-tracing vision
 		self.generateRays()

@@ -1,0 +1,33 @@
+﻿Merge branch 'pr/12'
+
+Conflicts:
+	__pycache__/body.cpython-34.pyc
+	__pycache__/guard.cpython-34.pyc
+	__pycache__/level_builder.cpython-34.pyc
+	__pycache__/player.cpython-34.pyc
+	res/guard-dead.png
+	res/guard-left.png
+	res/guard-right.png
+#
+# It looks like you may be committing a merge.
+# If this is not correct, please remove the file
+#	.git/MERGE_HEAD
+# and try again.
+
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# All conflicts fixed but you are still merging.
+#
+# Changes to be committed:
+#	modified:   Main.py
+#	modified:   body.py
+#	modified:   guard.py
+#	modified:   level_builder.py
+#	modified:   player.py
+#	new file:   res/player-standing.png
+#
+
