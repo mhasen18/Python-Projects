@@ -60,6 +60,13 @@ guards.append(Guard([300,200], path1, level_one))
 guards.append(Guard([100,200], path2, level_one))
 guards.append(Guard([32,200], path3, level_one))
 guards.append(Guard([300,200], path4, level_one))
+
+pygame.font.init()
+font = pygame.font.SysFont('timesnewroman', 100)
+pausedText = font.render("PAUSED", 1, (255,255,255))
+font2 = pygame.font.SysFont("timesnewroman", 36)
+continueText = font2.render("Press spacebar to continue", 1, (255,255,255))
+
 c = 50
 timeSlept = 0
 timePStart = time.time()
@@ -128,12 +135,7 @@ while playing == True:
 
 
 	if keys['SPACE']:
-		pygame.font.init()
-		font = pygame.font.SysFont('timesnewroman', 100)
-		pausedText = font.render("PAUSED", 1, (255,255,255))
 		screen.blit(pausedText, (320,300))
-		font2 = pygame.font.SysFont("timesnewroman", 36)
-		continueText = font2.render("Press spacebar to continue", 1, (255,255,255))
 		screen.blit(continueText, (320 ,400))
 
 	#update display
@@ -152,10 +154,3 @@ while playing == True:
 	if TIME_PER_FRAME - (time.time() - time_start) > .0002:
 		timeSlept += TIME_PER_FRAME - (time.time() - time_start)
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
-
-	player.img = pygame.image.load("res/player-standing.png").convert_alpha()
-
-		
-
-
-

@@ -11,30 +11,41 @@ def rot_center(image, rect, angle):
 class Player:
 	def __init__(self, pos, speed, level):
 		#These two are to make it look like character is walking; there's probably a better way to do this
-		self.rightForward = False
 		self.x=0
 
 		#init vats
-		self.img = pygame.image.load("res/player-standing.png").convert_alpha()
-		self.playerRect = self.img.get_rect()
+		self.img = [pygame.image.load("res/player-right.png").convert_alpha(), pygame.image.load("res/player-left.png").convert_alpha()]
+		self.imgStanding = pygame.image.load("res/player-standing.png").convert_alpha()
+		self.imgAttacking = pygame.image.load("res/player-knife.png").convert_alpha()
+		self.playerRect = self.img[0].get_rect()
 		self.pos = pos
 		self.playerRect = self.playerRect.move(pos[0], pos[1])
 		self.speed = speed
 		self.theta = 0
 		self.level = level
 		self.attacking = False
+		self.standing = True
+		self.collisionRect = pygame.Rect(self.playerRect.center[0] - 31, self.playerRect.center[1] - 31, 64, 64) 
 
 	def draw(self, screen): 
 		#rotate player image
-		rot_image, self.playerRect = rot_center(self.img, self.playerRect, self.theta)
-
+		if self.standing:
+			rot_img = pygame.transform.rotate(self.imgStanding, self.theta)
+		elif not self.attacking:
+			rot_img = pygame.transform.rotate(self.img[0], self.theta)
+		else:
+			rot_img = pygame.transform.rotate(self.imgAttacking, self.theta)
+		rot_rect = rot_img.get_rect()
+		mag = 28
+		rot_rect.center = (self.playerRect.center[0] - math.cos(math.radians(self.theta - 90)) * (mag), self.playerRect.center[1] + math.sin(math.radians(self.theta - 90)) * (mag))
+			
 		#draw image
-		screen.blit(rot_image, self.playerRect)
+		screen.blit(rot_img, rot_rect)
+		pygame.draw.rect(screen, (255, 0 , 0), rot_rect, 3)
 
 	def update(self, keys):
 		deltaF = 0
 		deltaS = 0
-
 		#get distance between mouse and center of player
 		mouseX, mouseY = pygame.mouse.get_pos()
 		mouseXO, mouseYO = pygame.mouse.get_pos()
@@ -55,15 +66,14 @@ class Player:
 
 		#check what keys/buttons are pressed
 		if keys["W"]:
+			self.standing = False
 			deltaF = 5
-			if self.rightForward:
-				self.img = pygame.image.load("res/player-right.png").convert_alpha()
-			else:
-				self.img = pygame.image.load("res/player-left.png").convert_alpha()
 			self.x+=1
 			if self.x == 5:
-				self.rightForward = not self.rightForward
+				self.img.append(self.img.pop(0))
 				self.x = 0
+		else:
+			self.standing = True
 		if keys["A"]:
 			deltaS = -5
 		if keys["S"]:
@@ -72,7 +82,6 @@ class Player:
 			deltaS = 5
 		if pygame.mouse.get_pressed()[0]:
 			self.attacking = True
-			self.img = pygame.image.load("res/player-knife.png")
 		else:
 			self.attacking = False
 
@@ -81,11 +90,11 @@ class Player:
 		self.playerRect = self.playerRect.move(-dirMovement[1] * deltaS, dirMovement[0] * deltaS)
 
 		#collision rect for player
-		collisionRect = pygame.Rect(self.playerRect.center[0] - 31, self.playerRect.center[1] - 31, 64, 64)
+		self.collisionRect = pygame.Rect(self.playerRect.center[0] - 31, self.playerRect.center[1] - 31, 64, 64)
 
 		#check collision with walls
 		for wall in self.level.walls:
-			if collisionRect.colliderect(wall):
+			if self.collisionRect.colliderect(wall):
 				self.playerRect = self.playerRect.move(-dirMovement[0] * deltaF, -dirMovement[1] * deltaF)
 				self.playerRect = self.playerRect.move(dirMovement[1] * deltaS, -dirMovement[0] * deltaS)
 

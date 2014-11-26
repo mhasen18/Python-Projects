@@ -142,7 +142,6 @@ class Line:
 class Guard:
 	def __init__(self, pos_, path_, map_):
 		#same thing as player; these two are used to make it look like they're walking
-		self.rightForward = False
 		self.x=0
 
 		#initialize vars
@@ -154,18 +153,15 @@ class Guard:
 		self.triangles = []
 		self.pos = [0,0]
 		self.pos[0], self.pos[1] = pos_[0], pos_[1]
-		self.img = pygame.image.load("res/guard-left.png").convert_alpha()
-		self.guardRect = self.img.get_rect()
+		self.img = [pygame.image.load("res/guard-left.png").convert_alpha(), pygame.image.load("res/guard-right.png").convert_alpha()]
+		self.guardRect = self.img[0].get_rect()
 		self.guardRect.center = self.pos
 		self.startPoint = self.guardRect.center[0], self.guardRect.center[1]
 
 
 	def draw(self, screen):
 		#rotate the image of the guard
-		rot_img, self.guardRect = rot_center(self.img, self.guardRect, self.theta)
-
-		#move the guard based on position
-		self.guardRect.center = self.pos[0], self.pos[1]
+		rot_img, self.guardRect = rot_center(self.img[0], self.guardRect, self.theta)
 
 		#draw guard on screen
 		screen.blit(rot_img, self.guardRect)
@@ -276,14 +272,15 @@ class Guard:
 
 		#move pos based on speed
 		self.pos[0], self.pos[1] = self.pos[0] - (self.magMove[0] * self.speed), self.pos[1] - (self.magMove[1] * self.speed)
-		if self.rightForward:
-			self.img = pygame.image.load("res/guard-right.png").convert_alpha()
-		else:
-			self.img = pygame.image.load("res/guard-left.png").convert_alpha()
+
+
 		self.x+=1
 		if self.x == 10:
-			self.rightForward = not self.rightForward
+			self.img.append(self.img.pop(0))
 			self.x = 0
+
+		#move the guard based on position
+		self.guardRect.center = self.pos[0], self.pos[1]
 
 		#start ray-tracing vision
 		self.generateRays()
