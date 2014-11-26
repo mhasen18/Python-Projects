@@ -9,9 +9,13 @@ def rot_center(image, rect, angle):
 	return rot_image,rot_rect
 
 class Player:
-	def __init__(self, img, pos, speed, level):
+	def __init__(self, pos, speed, level):
+		#These two are to make it look like character is walking; there's probably a better way to do this
+		self.rightForward = False
+		self.x=0
+
 		#init vats
-		self.img = pygame.image.load(img).convert_alpha()
+		self.img = pygame.image.load("res/player-standing.png").convert_alpha()
 		self.playerRect = self.img.get_rect()
 		self.pos = pos
 		self.playerRect = self.playerRect.move(pos[0], pos[1])
@@ -52,6 +56,14 @@ class Player:
 		#check what keys/buttons are pressed
 		if keys["W"]:
 			deltaF = 5
+			if self.rightForward:
+				self.img = pygame.image.load("res/player-right.png").convert_alpha()
+			else:
+				self.img = pygame.image.load("res/player-left.png").convert_alpha()
+			self.x+=1
+			if self.x == 5:
+				self.rightForward = not self.rightForward
+				self.x = 0
 		if keys["A"]:
 			deltaS = -5
 		if keys["S"]:
@@ -60,6 +72,7 @@ class Player:
 			deltaS = 5
 		if pygame.mouse.get_pressed()[0]:
 			self.attacking = True
+			self.img = pygame.image.load("res/player-knife.png")
 		else:
 			self.attacking = False
 

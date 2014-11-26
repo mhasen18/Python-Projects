@@ -8,7 +8,7 @@ import urllib.request
 import io
 import astar
 import player
-import body
+from body import Body
 from guard import Guard
 from level_builder import LevelBuilder
 
@@ -33,13 +33,6 @@ bodies = []
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
 
-PLAYER_IMG = "player.png"
-
-fileExists = os.path.isfile(PLAYER_IMG)
-if not fileExists:
-	URL = "http://i.imgur.com/14GOa9C.png"
-	urllib.request.urlretrieve(URL, PLAYER_IMG)
-
 rectForWalls = []
 rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
 			pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
@@ -50,12 +43,9 @@ rectForWalls.append(pygame.Rect(0, 32, 32, size[1] - 32))
 rectForWalls.append(pygame.Rect(size[0] - 32, 32, 32, size[1] - 32))
 
 level_one = LevelBuilder(rectForWalls, guards)
-for elem in level_one.getRectGrid():
-       # print(elem)
-       pass
 
 #init player
-player = player.Player(PLAYER_IMG, (612, 348), 5, level_one)
+player = player.Player((612, 348), 5, level_one)
 
 #set mouse coord right above image
 pygame.mouse.set_pos(player.playerRect.center[0], player.playerRect.center[1] - 40)
@@ -66,10 +56,10 @@ path2 = [(200, 600), [800, 600]]
 path3 = [(450, 100), (450, 400)]
 path4 = [(700, 100), (900, 100), (900, 300), (700, 300)]
 
-guards.append(Guard("player.png", [300,200], path1, level_one))
-guards.append(Guard("player.png", [100,200], path2, level_one))
-guards.append(Guard("player.png", [32,200], path3, level_one))
-guards.append(Guard("player.png", [300,200], path4, level_one))
+guards.append(Guard([300,200], path1, level_one))
+guards.append(Guard([100,200], path2, level_one))
+guards.append(Guard([32,200], path3, level_one))
+guards.append(Guard([300,200], path4, level_one))
 c = 50
 timeSlept = 0
 timePStart = time.time()
@@ -115,32 +105,36 @@ while playing == True:
 			#get the guard/remove it
 			tmp = guards.pop(i)
 			#add body in guards position
-			bodies.append(body.Body(tmp.pos, tmp.theta))
-			#(can only kill one guard at time[logic] so stop checking
+			bodies.append(Body(tmp.pos, tmp.theta))
 			break
+
 
 	#update everything if not paused
 	if not keys['SPACE']:
 		level_one.update()
 		player.update(keys)
-		for bodi in bodies:
-			bodi.update((0, 0))
+		for body in bodies:
+			body.update((0, 0))
 			
 
 	#make screen black(erase screen)
-	screen.fill((255,255,255))
-	
+	screen.fill((0,0,0))
+
 	#draw everything
+	for body in bodies:
+		body.draw(screen)
 	level_one.draw(screen)
 	player.draw(screen)
-	for bodi in bodies:
-		bodi.draw(screen)
+
 
 	if keys['SPACE']:
 		pygame.font.init()
 		font = pygame.font.SysFont('timesnewroman', 100)
-		playGameTxt = font.render("PAUSED", 1, (0,0,0))
-		screen.blit(playGameTxt, (320,300))
+		pausedText = font.render("PAUSED", 1, (255,255,255))
+		screen.blit(pausedText, (320,300))
+		font2 = pygame.font.SysFont("timesnewroman", 36)
+		continueText = font2.render("Press spacebar to continue", 1, (255,255,255))
+		screen.blit(continueText, (320 ,400))
 
 	#update display
 	pygame.display.flip()
@@ -158,6 +152,9 @@ while playing == True:
 	if TIME_PER_FRAME - (time.time() - time_start) > .0002:
 		timeSlept += TIME_PER_FRAME - (time.time() - time_start)
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
+
+	player.img = pygame.image.load("res/player-standing.png").convert_alpha()
+
 		
 
 

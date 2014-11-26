@@ -13,7 +13,7 @@ class LevelBuilder():
 			guard.update()
 
 	def draw(self, screen):
-		gray = (104,104,104)
+		gray = (51,51,51)
 
 		for guard in self.guards:
 			guard.draw(screen)
@@ -22,10 +22,6 @@ class LevelBuilder():
 			
 	def getRectGrid(self):
 		"""Returns a 64x48 matrix of 0s and 1s, where 1s denote the presence of a wall"""
-	
-		##Works under assumption that width of walls is 32 pixels (as in, takes up
-		##two spots in the 64x48 grid). I can probably change it to work for all widths,
-		##but I see no need.
 		
 		GridList = [[0 for x in range(64)] for y in range(48)]
 		for wall in self.walls:
