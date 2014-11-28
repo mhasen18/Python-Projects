@@ -34,8 +34,8 @@ pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
 
 rectForWalls = []
-rectForWalls = [pygame.Rect((0,352,368,32)), pygame.Rect((352,0,32,224)),
-			pygame.Rect((528,0,32,448)), pygame.Rect((702,432,336,32))]
+rectForWalls = [pygame.Rect((32,320,368,32)), pygame.Rect((352,32,32,192)),
+			pygame.Rect((528,32,32,416)), pygame.Rect((702,432,290,32))]
 
 rectForWalls.append(pygame.Rect(0,0,size[0], 32))
 rectForWalls.append(pygame.Rect(0,size[1] - 32,size[0], 32))
@@ -117,21 +117,22 @@ while playing == True:
 
 
 	#update everything if not paused
-	if not keys['SPACE']:
-		level_one.update()
-		player.update(keys)
-		for body in bodies:
-			body.update((0, 0))
+	#if not keys['SPACE']:
+	#	level_one.update()
+	#	player.update(keys)
+	#	for body in bodies:
+	#		body.update((0, 0))
 			
 
 	#make screen black(erase screen)
 	screen.fill((0,0,0))
 
 	#draw everything
-	for body in bodies:
-		body.draw(screen)
-	level_one.draw(screen)
-	player.draw(screen)
+	#for body in bodies:
+	#	body.draw(screen)
+	#level_one.draw(screen)
+	#player.draw(screen)
+	#level_one.draw(screen)
 
 
 	if keys['SPACE']:
@@ -152,5 +153,5 @@ while playing == True:
 	
 	#sleep to maintain a constant framerate of 30 fps
 	if TIME_PER_FRAME - (time.time() - time_start) > .0002:
-		timeSlept += TIME_PER_FRAME - (time.time() - time_start)
 		time.sleep(TIME_PER_FRAME - (time.time() - time_start))
+		timeSlept += TIME_PER_FRAME - (time.time() - time_start)

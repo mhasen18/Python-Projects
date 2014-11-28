@@ -23,7 +23,8 @@ class Triangle:
 
 	def draw(self, screen):
 		#draw triangle
-		pygame.gfxdraw.filled_trigon(screen, round(self.pos1[0]), round(self.pos1[1]), round(self.pos2[0]), round(self.pos2[1]), round(self.pos3[0]), round(self.pos3[1]), (255, 255, 0,  128))
+		pygame.gfxdraw.filled_trigon(screen, round(self.pos1[0]), round(self.pos1[1]), round(self.pos2[0]), round(self.pos2[1]), round(self.pos3[0]), round(self.pos3[1]), (255, 255, 0,  180))
+
 
 class Line:
 	def __init__(self, posS,posE):
@@ -148,8 +149,8 @@ class Guard:
 		self.path = path_
 		self.level = map_
 		self.speed = 4
-		self.range = 200
-		self.fov = 40
+		self.range = 400
+		self.fov = 60
 		self.triangles = []
 		self.pos = [0,0]
 		self.pos[0], self.pos[1] = pos_[0], pos_[1]
@@ -166,9 +167,8 @@ class Guard:
 		#draw guard on screen
 		screen.blit(rot_img, self.guardRect)
 
-		
-		[tri.draw(screen) for tri in self.triangles]
-		[ray.draw(screen, (0, 255, 0)) for ray in self.rays]
+		[tri.draw(screen, i) for tri in self.triangles]
+		#[ray.draw(screen, (0, 255, 0)) for ray in self.rays]
 
 	def generateRays(self):
 

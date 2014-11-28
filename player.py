@@ -14,9 +14,9 @@ class Player:
 		self.x=0
 
 		#init vats
-		self.img = [pygame.image.load("res/player-right.png").convert_alpha(), pygame.image.load("res/player-left.png").convert_alpha()]
-		self.imgStanding = pygame.image.load("res/player-standing.png").convert_alpha()
-		self.imgAttacking = pygame.image.load("res/player-knife.png").convert_alpha()
+		self.img = [pygame.image.load("res/player-right2.png").convert_alpha(), pygame.image.load("res/player-left2.png").convert_alpha()]
+		self.imgStanding = pygame.image.load("res/player-standing2.png").convert_alpha()
+		self.imgAttacking = pygame.image.load("res/player-knife2.png").convert_alpha()
 		self.playerRect = self.img[0].get_rect()
 		self.pos = pos
 		self.playerRect = self.playerRect.move(pos[0], pos[1])
@@ -29,14 +29,18 @@ class Player:
 
 	def draw(self, screen): 
 		#rotate player image
-		if self.standing:
+		if self.standing and not self.attacking:
 			rot_img = pygame.transform.rotate(self.imgStanding, self.theta)
+			mag = 23
 		elif not self.attacking:
 			rot_img = pygame.transform.rotate(self.img[0], self.theta)
+			mag = 23
 		else:
 			rot_img = pygame.transform.rotate(self.imgAttacking, self.theta)
+			mag = 35
+
 		rot_rect = rot_img.get_rect()
-		mag = 28
+
 		rot_rect.center = (self.playerRect.center[0] - math.cos(math.radians(self.theta - 90)) * (mag), self.playerRect.center[1] + math.sin(math.radians(self.theta - 90)) * (mag))
 			
 		#draw image
