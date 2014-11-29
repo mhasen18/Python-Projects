@@ -99,4 +99,4 @@ class AStar:
 								break
 						heapq.heapify(self.queue)
 
-		return ("NOT FOUND")
+		return goal

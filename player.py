@@ -37,7 +37,7 @@ class Player:
 			mag = 23
 		else:
 			rot_img = pygame.transform.rotate(self.imgAttacking, self.theta)
-			mag = 35
+			mag = 40
 
 		rot_rect = rot_img.get_rect()
 
