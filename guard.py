@@ -167,7 +167,7 @@ class Guard:
 		#draw guard on screen
 		screen.blit(rot_img, self.guardRect)
 
-		[tri.draw(screen, i) for tri in self.triangles]
+		[tri.draw(screen) for tri in self.triangles]
 		#[ray.draw(screen, (0, 255, 0)) for ray in self.rays]
 
 	def generateRays(self):

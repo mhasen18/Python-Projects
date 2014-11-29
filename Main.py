@@ -117,22 +117,21 @@ while playing == True:
 
 
 	#update everything if not paused
-	#if not keys['SPACE']:
-	#	level_one.update()
-	#	player.update(keys)
-	#	for body in bodies:
-	#		body.update((0, 0))
+	if not keys['SPACE']:
+		level_one.update()
+		player.update(keys)
+		for body in bodies:
+			body.update((0, 0))
 			
 
 	#make screen black(erase screen)
 	screen.fill((0,0,0))
 
 	#draw everything
-	#for body in bodies:
-	#	body.draw(screen)
-	#level_one.draw(screen)
-	#player.draw(screen)
-	#level_one.draw(screen)
+	for body in bodies:
+		body.draw(screen)
+	player.draw(screen)
+	level_one.draw(screen)
 
 
 	if keys['SPACE']:
