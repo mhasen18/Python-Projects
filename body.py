@@ -11,9 +11,7 @@ class Body:
 		self.rect.center = (pos[0], pos[1])
 
 	def draw(self, screen):
-		#rot_img, rot_rect = rot_center(self.img, self.rect, self.theta)
 		rot_img = pygame.transform.rotate(self.img, self.theta)
-	#	rot_rect = self.rect
 		rot_rect = rot_img.get_rect()
 		rot_rect.center = self.rect.center
 		screen.blit(rot_img, rot_rect)

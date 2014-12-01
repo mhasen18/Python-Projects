@@ -26,9 +26,9 @@ class Node:
 		return self.priority < other.priority
 	def estimate(self, dest):
 		#Euclidian
-		#return (((dest[0] - self.x) ** 2) + ((dest[1] - self. y) ** 2)) ** (1 / 2)
+		return (((dest[0] - self.x) ** 2) + ((dest[1] - self. y) ** 2)) ** (1 / 2)
 		#Manhattan
-		return (math.fabs(dest[0] - self.x) + math.fabs(dest[1] - self.y))
+		#return (math.fabs(dest[0] - self.x) + math.fabs(dest[1] - self.y))
 	def __repr__(self):
 		return("Node" + str(self.x) + str(self.y) + " P" + str(self.priority))
 
@@ -41,6 +41,11 @@ class AStar:
 		self.queue = []
 		self.openNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
 		self.closedNodes = [[0 for i in range(len(self.grid[0]))] for j in range(len(self.grid))]
+		self.path = []
+
+	def startPath(self, start, goal):
+		self.start = start
+		self.goal = goal
 		startNode = Node(start[0], start[1], None, 0, 0)
 		startNode.updatePriority(goal)
 		heapq.heappush(self.queue, startNode)
@@ -48,7 +53,7 @@ class AStar:
 		self.closedNodes[startNode.x][startNode.y] = 1
 		self.notFound = True
 
-	def pathFind(TIME_PERMITTED):
+	def pathFind(self, TIME_PERMITTED):
 		#send in the time we are allowing to compute this part 
 		#of the path
 		#(path not found at once, partitions path finding)
@@ -62,7 +67,7 @@ class AStar:
 				while curNode.parent:
 					pathList.append((curNode.x, curNode.y))
 					curNode = curNode.parent
-				return pathList[::-1]
+				self.path =  pathList[::-1]
 
 			curNode = heapq.heappop(self.queue)
 			x = curNode.x
@@ -76,7 +81,7 @@ class AStar:
 				while curNode.parent:
 					pathList.append((curNode.x, curNode.y))
 					curNode = curNode.parent
-				return pathList[::-1]
+				self.path ==  pathList[::-1]
 
 			for i in range(len(dx)):
 				childX = x + dx[i]
@@ -99,4 +104,8 @@ class AStar:
 								break
 						heapq.heapify(self.queue)
 
-		return goal
+			if not self.notFound:
+				while curNode.parent:
+					pathList.append((curNode.x, curNode.y))
+					curNode = curNode.parent
+				return pathList[::-1]
