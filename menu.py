@@ -19,19 +19,12 @@ import sys
 ## - I think we should make our own images as well, so that the art 
 ## - style is the same throughout
 ## - We should put music, but I don't like this one.
-## - Resolution independence for screen shouldn't be hard, I give an example below
 
 pygame.init()
-size = (1080, 768)
+size = (1024,768)
 pygame.display.set_caption("Body Game")
-screen = pygame.display.set_mode((1080, 768))
+screen = pygame.display.set_mode(size)
 bgImg = pygame.image.load("res/menu-bg.jpg")
-
-## EXAMPLE
-#Example of resolution indepence, scale background img to size of screen
-#When you draw your images, draw in terms of size[0] and size[1] of frame
-#instead of fixed points
-bgImg = pygame.transform.scale(bgImg, size)
 
 #This is if we want to add music. I suggest we use a more fitting song/sound
 #though (same thing applies for all the images I used)
@@ -48,7 +41,7 @@ playing = True
 def onMouseClick(JPEG):
     if event.type == pygame.MOUSEBUTTONUP:
         imgToDraw = pygame.image.load(JPEG)
-        screen.blit(imgToDraw,(31,300))
+        screen.blit(imgToDraw,(58,450))
 
 while playing:
     for event in pygame.event.get():
@@ -71,22 +64,22 @@ while playing:
     x = 0
     for icon in icon_list:
         icon_rect = icon.get_rect()
-        icon_rect.x,icon_rect.y = (160+x,200)
+        icon_rect.x,icon_rect.y = (295+x,330)
         icon_rect_list.append(icon_rect)
 
-        screen.blit(icon,(160+x, 200))
-        x+=100
+        screen.blit(icon,(295+x, 330))
+        x+=150
         
-    font = pygame.font.SysFont('comicsansms', 13)
+    font = pygame.font.SysFont('comicsansms', 16)
     
     #Going through icons; if they are hovered over, highlight them and add
     #text underneath describing their purpose
     for i, icon in enumerate(icon_rect_list):
         if icon.collidepoint(pygame.mouse.get_pos()) and i == 0:
             playIcon = pygame.image.load("res/play_highlighted.png")
-            screen.blit(playIcon, (160,200))
+            screen.blit(playIcon, (295,330))
             playGameTxt = font.render("Play Game", 1, (255,0,0))
-            screen.blit(playGameTxt, (172, 275))
+            screen.blit(playGameTxt, (320, 450))
             pygame.mouse.set_cursor(*pygame.cursors.diamond)
             if event.type == pygame.MOUSEBUTTONUP:
                 pygame.mixer.music.fadeout(1500)
@@ -96,20 +89,20 @@ while playing:
 
         if icon.collidepoint(pygame.mouse.get_pos()) and i == 1:
             instructionsIcon = pygame.image.load("res/instructions_highlighted.png")
-            screen.blit(instructionsIcon, (260,200))
+            screen.blit(instructionsIcon, (445,330))
             instructionsTxt = font.render("Instructions", 1, (255,0,0))
-            screen.blit(instructionsTxt, (263, 275))
-            onMouseClick("res/instructions_box.jpg")
+            screen.blit(instructionsTxt, (460, 450))
             pygame.mouse.set_cursor(*pygame.cursors.diamond)
+            onMouseClick("res/instructions_box.jpg")
             break
 
         if icon.collidepoint(pygame.mouse.get_pos()) and i == 2:
             creditsIcon = pygame.image.load("res/credits_highlighted.png")
-            screen.blit(creditsIcon,(360,200))
+            screen.blit(creditsIcon,(595,330))
             creditsTxt = font.render("Credits", 1, (255,0,0))
-            screen.blit(creditsTxt, (377, 275))
-            onMouseClick("res/credits_box.jpg")
+            screen.blit(creditsTxt, (625, 450))
             pygame.mouse.set_cursor(*pygame.cursors.diamond)
+            onMouseClick("res/credits_box.jpg")
             break
 
         pygame.mouse.set_cursor(*pygame.cursors.arrow)
